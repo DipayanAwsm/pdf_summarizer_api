@@ -18,7 +18,7 @@ app.add_middleware(
 
 templates = Jinja2Templates(directory="templates")
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SUMMARY_DIR = os.path.join(BASE_DIR, "summaries")
 os.makedirs(SUMMARY_DIR, exist_ok=True)
 

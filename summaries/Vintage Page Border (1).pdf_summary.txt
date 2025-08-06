@@ -1,0 +1,3 @@
+10 ChatGPT Prompts Every Chartered Accountant Should Know .Simplify routine tasks, improve client communications, and save time using AI . Use them for writing, planning, learning and organising your life .
+ Data Scientist Dipayan. Dipayan . Dipayan: Summarize large invoices or bank statements into a monthly cash inflow/outflow/flow summary: [paste data]”
+ A simple SOP for preparing and reviewing a client’s roughly quarterly TDS return can be used to explain input tax credit to a new business owner in 2 minutes . The guide also includes a bonus prompt: "Review or Polish Reports"

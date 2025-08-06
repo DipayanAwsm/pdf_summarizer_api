@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDF Summarizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f9f9f9;
+      color: #333;
+      max-width: 600px;
+      margin: auto;
+    }
+    input[type="file"] {
+      margin-bottom: 20px;
+    }
+    #summary {
+      white-space: pre-wrap;
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #loading {
+      display: none;
+      color: #888;
+      margin-top: 10px;
+    }
+    button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📄 PDF Summarizer</h1>
+  <p>Upload a PDF and get a summarized version using AI.</p>
+
+  <input type="file" id="pdfFile" accept=".pdf" />
+  <br>
+  <button onclick="summarizePDF()">Summarize</button>
+  <div id="loading">⏳ Summarizing...</div>
+
+  <div id="summary"></div>
+
+  <script>
+    async function summarizePDF() {
+      const fileInput = document.getElementById("pdfFile");
+      const file = fileInput.files[0];
+      const summaryDiv = document.getElementById("summary");
+      const loading = document.getElementById("loading");
+
+      if (!file) {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      summaryDiv.textContent = "";
+      loading.style.display = "block";
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("https://your-api.onrender.com/summarize-pdf/", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+        summaryDiv.textContent = data.summary || "❗ Error: No summary returned.";
+      } catch (err) {
+        summaryDiv.textContent = "❌ Failed to summarize. Check console for details.";
+        console.error(err);
+      } finally {
+        loading.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>

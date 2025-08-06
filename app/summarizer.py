@@ -7,7 +7,7 @@ device = 0 if torch.cuda.is_available() else -1
 #summarizer = pipeline("summarization")
 
 # Force to CPU even if MPS is available (to avoid error)
-summarizer = pipeline("summarization", device=device)
+summarizer = pipeline("summarization", device=device,model="knkarthick/MEETING_SUMMARY")
 
 
 def extract_text_from_pdf(pdf_path):

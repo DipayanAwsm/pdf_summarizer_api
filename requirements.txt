@@ -1,5 +1,6 @@
 fastapi
 uvicorn
-PyMuPDF
 transformers
+PyPDF2
+jinja2
 torch

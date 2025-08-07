@@ -1,96 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart PDF Summarizer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        input[type="file"] {
-            margin-top: 1rem;
-            width: 100%;
-        }
-        button {
-            margin-top: 1rem;
-            padding: 0.7rem 1.5rem;
-            font-size: 1rem;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        pre {
-            margin-top: 1.5rem;
-            background: #f1f1f1;
-            padding: 1rem;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart PDF Summarizer</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #f4f4f4; margin: 0; padding: 0;
+      display: grid; place-items: center; min-height: 100vh;
+    }
+    .card {
+      width: min(680px, 92vw);
+      background: #fff; border-radius: 14px; padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p { margin: 0 0 16px; color: #555; }
+    .row { display:flex; gap:12px; align-items:center; margin-top:8px;}
+    input[type="file"] { flex:1; }
+    button {
+      appearance: none; border: 0; border-radius: 10px;
+      padding: 10px 16px; background: #2563eb; color: #fff;
+      font-weight: 600; cursor: pointer;
+    }
+    button:hover { background:#1d4ed8; }
+    .summary {
+      margin-top:16px; padding:14px; background:#f8fafc;
+      border:1px solid #e5e7eb; border-radius:10px; white-space:pre-wrap;
+      min-height: 120px;
+    }
+    .muted { color:#6b7280; font-size: 14px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📄 Smart PDF Summarizer</h1>
-        <form id="uploadForm">
-            <input type="file" id="pdfFile" name="file" accept="application/pdf" required>
-            <button type="submit">Summarize</button>
-        </form>
-        <h2>Summary:</h2>
-        <pre id="summaryText">Waiting...</pre>
-    </div>
+  <div class="card">
+    <h1>📄 Smart PDF Summarizer</h1>
+    <p class="muted">Upload a PDF and get a clean AI summary in seconds.</p>
+    <form id="uploadForm">
+      <div class="row">
+        <input type="file" id="pdfFile" name="file" accept="application/pdf" required>
+        <button type="submit">Summarize</button>
+      </div>
+    </form>
+    <div class="summary" id="summaryText">Waiting...</div>
+  </div>
 
-    <script>
-        const API_BASE_URL = "https://pdf-summarizer-api-83l1.onrender.com";
+  <script>
+    // ✅ Same-origin; no need to hardcode your Render domain.
+    // If you ever host the HTML elsewhere, replace fetch("/summarize-pdf/")
+    // with: fetch("https://pdf-summarizer-api-83l1.onrender.com/summarize-pdf/", ...)
+    const form = document.getElementById("uploadForm");
+    const summaryBox = document.getElementById("summaryText");
 
-        document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const file = document.getElementById("pdfFile").files[0];
+      if (!file) { alert("Please select a PDF."); return; }
 
-            const fileInput = document.getElementById("pdfFile");
-            const file = fileInput.files[0];
-            const formData = new FormData();
-            formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-            document.getElementById("summaryText").innerText = "⏳ Summarizing...";
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/summarize-pdf/`, {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const data = await response.json();
-                document.getElementById("summaryText").innerText = data.summary || "❌ Failed to summarize.";
-            } catch (err) {
-                document.getElementById("summaryText").innerText = "❌ Error: " + err;
-            }
+      summaryBox.textContent = "⏳ Summarizing...";
+      try {
+        const res = await fetch("/summarize-pdf/", {  // ✅ relative path, same-origin
+          method: "POST",
+          body: formData
         });
-    </script>
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        summaryBox.textContent = data.summary || "No summary returned.";
+      } catch (err) {
+        summaryBox.textContent = `❌ Failed to fetch: ${err.message}`;
+      }
+    });
+  </script>
 </body>
 </html>
